@@ -1,0 +1,122 @@
+# Data storage
+users = {}
+quiz_categories = {
+    "DBMS": [
+        {"question": "What does DBMS stand for?", "answer": "Database Management System"},
+        {"question": "Which language is used to query databases?", "answer": "SQL"},
+        {"question": "What is a primary key?", "answer": "Unique identifier"}
+    ],
+    "Java": [
+        {"question": "What is the main method signature in Java?", "answer": "public static void main(String[] args)"},
+        {"question": "Java is platform-____?", "answer": "Independent"},
+        {"question": "Who invented Java?", "answer": "James Gosling"}
+    ],
+    "Python": [
+        {"question": "What keyword is used to define a function in Python?", "answer": "def"},
+        {"question": "What data type is used to store True or False?", "answer": "Boolean"},
+        {"question": "What does 'PEP' stand for?", "answer": "Python Enhancement Proposal"}
+    ]
+    "Networking": [
+        {"question": "What does TCP stand for?", "answer": "Transmission Control Protocol"},
+        {"question": "What is an IP address?", "answer": "Internet Protocol address"},
+        {"question": "Which protocol is used to send email?", "answer": "SMTP"}
+    ]
+}
+
+# User registration
+def register():
+    print("\n--- Register ---")
+    username = input("Enter username: ")
+    if username in users:
+        print("Username already exists. Please try a different username.")
+        return
+    password = input("Enter password: ")
+    full_name = input("Enter full name: ")
+    email = input("Enter email: ")
+    age = input("Enter age: ")
+    users[username] = {
+        "password": password,
+        "full_name": full_name,
+        "email": email,
+        "age": age,
+        "scores": {}
+    }
+    print("Registration successful!")
+
+# User login
+def login():
+    print("\n--- Login ---")
+    username = input("Enter username: ")
+    password = input("Enter password: ")
+    if username in users and users[username]["password"] == password:
+        print(f"Welcome, {users[username]['full_name']}!")
+        return username
+    else:
+        print("Invalid username or password.")
+        return None
+
+# Attempt quiz by category
+def attempt_quiz(username):
+    print("\n--- Select Quiz Category ---")
+    for idx in range(len(quiz_categories)):
+        category = list(quiz_categories.keys())[idx]
+        print(f"{idx + 1}. {category}")
+    
+    choice = int(input("Choose a category number: "))
+    category = list(quiz_categories.keys())[choice - 1]
+    
+    print(f"\n--- {category} Quiz ---")
+    score = 0
+    for q in quiz_categories[category]:
+        answer = input(q["question"] + " ")
+        if answer.strip().lower() == q["answer"].strip().lower():
+            score += 1
+    
+    users[username]["scores"][category] = score
+    print(f"You scored {score}/{len(quiz_categories[category])} in {category}.")
+
+# Show result
+def show_result(username):
+    print("\n--- Results ---")
+    if users[username]["scores"]:
+        for category, score in users[username]["scores"].items():
+            print(f"{category}: {score}/{len(quiz_categories[category])}")
+    else:
+        print("No quiz attempts found.")
+
+# Main application loop
+def main():
+    current_user = None
+    while True:
+        print("\n--- Quiz App ---")
+        print("1. Register")
+        print("2. Login")
+        print("3. Attempt Quiz")
+        print("4. Show Result")
+        print("5. Exit")
+        
+        choice = input("Choose an option: ")
+        
+        if choice == "1":
+            register()
+        elif choice == "2":
+            current_user = login()
+        elif choice == "3":
+            if current_user:
+                attempt_quiz(current_user)
+            else:
+                print("Please login first.")
+        elif choice == "4":
+            if current_user:
+                show_result(current_user)
+            else:
+                print("Please login first.")
+        elif choice == "5":
+            print("Exiting the app.")
+            break
+        else:
+            print("Invalid choice, please try again.")
+
+# Run the application
+if __name__ == "__main__":
+    main()
